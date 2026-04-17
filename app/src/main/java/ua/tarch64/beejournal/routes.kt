@@ -1,11 +1,24 @@
 package ua.tarch64.beejournal
 
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import ua.tarch64.beejournal.ui.locations.LocationsView
+import ua.tarch64.beejournal.ui.locations.add.LocationAddView
+import ua.tarch64.beejournal.ui.locations.list.LocationsView
 
-const val DEFAULT_ROUTE = "locations"
+enum class Route(val path: String) {
+    LOCATIONS("locations"),
+    LOCATION_ADD("locations/add")
+}
 
-val routes: NavGraphBuilder.() -> Unit = {
-    composable(DEFAULT_ROUTE) { LocationsView() }
+val DEFAULT_ROUTE = Route.LOCATIONS
+
+fun buildRoutes(nav: NavController): NavGraphBuilder.() -> Unit = {
+    composable(Route.LOCATIONS.path) {
+        LocationsView(onAdd = { nav.navigate(Route.LOCATION_ADD.path) })
+    }
+
+    composable(Route.LOCATION_ADD.path) {
+        LocationAddView(onBack = { nav.popBackStack() })
+    }
 }

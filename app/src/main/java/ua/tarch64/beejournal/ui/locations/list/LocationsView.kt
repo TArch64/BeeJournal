@@ -1,4 +1,4 @@
-package ua.tarch64.beejournal.ui.locations
+package ua.tarch64.beejournal.ui.locations.list
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -18,11 +18,9 @@ import ua.tarch64.beejournal.ui.base.list.ListView
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun LocationsView() {
+fun LocationsView(onAdd: () -> Unit) {
     val locations by LocationsService.instance.locations.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
-
-    fun addLocation() {}
 
     ListView(
         list = locations,
@@ -31,7 +29,7 @@ fun LocationsView() {
         topBar = { TopAppBar(title = { Text("BeeJournal") }) },
         addButton = {
             ExtendedFloatingActionButton(
-                onClick = ::addLocation,
+                onClick = onAdd,
                 icon = { Icon(Icons.Default.Add, contentDescription = "Додати Місце") },
                 text = { Text("Додати") }
             )

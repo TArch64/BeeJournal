@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,8 +41,12 @@ fun BeeJournalApp() {
     } else {
         NavHost(
             navController = navController,
-            startDestination = DEFAULT_ROUTE,
-            builder = routes
+            startDestination = DEFAULT_ROUTE.path,
+            enterTransition = { slideInHorizontally(tween(500)) { it } },
+            exitTransition = { slideOutHorizontally(tween(500)) { -it } },
+            popEnterTransition = { slideInHorizontally(tween(500)) { -it } },
+            popExitTransition = { slideOutHorizontally(tween(500)) { it } },
+            builder = buildRoutes(navController)
         )
     }
 }
