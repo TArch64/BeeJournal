@@ -39,13 +39,14 @@ class LocationsService {
             }
     }
 
-    suspend fun add(name: String) {
+    suspend fun add(name: String): LocationModel {
         val location = LocationModel(
             name = name,
             owners = listOf(uid)
         )
 
         collection.add(location).await()
+        return location
     }
 
     companion object {

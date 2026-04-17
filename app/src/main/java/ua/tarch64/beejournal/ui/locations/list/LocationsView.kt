@@ -20,13 +20,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.services.LocationsService
 import ua.tarch64.beejournal.ui.base.list.ListEmpty
 import ua.tarch64.beejournal.ui.base.list.ListView
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun LocationsView(onAdd: () -> Unit) {
+fun LocationsView(
+    onAdd: () -> Unit,
+    onOpenLocation: (location: LocationModel) -> Unit
+) {
     val locations by LocationsService.instance.locations.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
 
@@ -58,7 +62,8 @@ fun LocationsView(onAdd: () -> Unit) {
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.outlinedCardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLowest
-            )
+            ),
+            onClick = { onOpenLocation(location) }
         ) {
             ListItem(
                 headlineContent = { Text(location.name) },

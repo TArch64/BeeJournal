@@ -29,8 +29,6 @@ fun <T> ListView(
     empty: @Composable () -> Unit,
     item: @Composable (T) -> Unit
 ) {
-
-
     Scaffold(
         topBar = topBar,
         floatingActionButton = addButton,
@@ -58,14 +56,14 @@ fun <T> ListView(
                         items(list) { item(it) }
                     }
 
-                    ListState.LOADING -> Box(
+                    ListState.EMPTY -> Box(
                         modifier = containerModifier,
                         contentAlignment = Alignment.Center
                     ) {
                         empty()
                     }
 
-                    else -> Box { }
+                    ListState.LOADING -> Box { }
                 }
             }
         }

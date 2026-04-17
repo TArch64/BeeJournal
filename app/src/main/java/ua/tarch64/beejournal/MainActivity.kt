@@ -41,7 +41,7 @@ fun BeeJournalApp() {
     } else {
         NavHost(
             navController = navController,
-            startDestination = DEFAULT_ROUTE.path,
+            startDestination = LocationsRoute,
             enterTransition = { slideInHorizontally(tween(500)) { it } },
             exitTransition = { slideOutHorizontally(tween(500)) { -it } },
             popEnterTransition = { slideInHorizontally(tween(500)) { -it } },
