@@ -1,10 +1,12 @@
 package ua.tarch64.beejournal.services
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.tasks.await
 import ua.tarch64.beejournal.models.LocationModel
 
 class LocationsService {
@@ -14,17 +16,36 @@ class LocationsService {
     val locations = _locations.asStateFlow()
     val loading = _loading.asStateFlow()
 
+    private val collection = Firebase.firestore.collection("locations")
+    private lateinit var listener: ListenerRegistration
+
+    private val uid: String get() = AuthService.instance.user.value!!.uid
+
     fun load() {
         _loading.value = true
 
-        Firebase.firestore.collection("locations")
+        if (::listener.isInitialized) {
+            listener.remove()
+        }
+
+        listener = collection
+            .whereArrayContains("owners", uid)
             .orderBy("createdAt", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { result ->
-                _locations.value = result.documents.map(LocationModel.Companion::fromDocument)
+            .addSnapshotListener { snapshots, _ ->
+                if (snapshots != null) {
+                    _locations.value = snapshots.documents.map(LocationModel::fromDocument)
+                }
                 _loading.value = false
             }
-            .addOnFailureListener { _loading.value = false }
+    }
+
+    suspend fun add(name: String) {
+        val location = LocationModel(
+            name = name,
+            owners = listOf(uid)
+        )
+
+        collection.add(location).await()
     }
 
     companion object {

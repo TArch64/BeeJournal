@@ -9,13 +9,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import ua.tarch64.beejournal.services.LocationsService
 import ua.tarch64.beejournal.ui.base.form.FormView
 
 @Composable
 fun LocationAddView(onBack: () -> Unit) {
     var name by remember { mutableStateOf("") }
 
-    suspend fun addLocation() {}
+    suspend fun addLocation() {
+        LocationsService.instance.add(name)
+        onBack()
+    }
 
     FormView(
         title = "Нове Місце",

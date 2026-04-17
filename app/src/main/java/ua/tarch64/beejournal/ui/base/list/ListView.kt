@@ -1,5 +1,6 @@
 package ua.tarch64.beejournal.ui.base.list
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+private enum class ListState {
+    LIST,
+    LOADING,
+    EMPTY
+}
+
 @Composable
 fun <T> ListView(
     list: List<T>,
@@ -22,6 +29,8 @@ fun <T> ListView(
     empty: @Composable () -> Unit,
     item: @Composable (T) -> Unit
 ) {
+
+
     Scaffold(
         topBar = topBar,
         floatingActionButton = addButton,
@@ -30,23 +39,35 @@ fun <T> ListView(
             isRefreshing = loading,
             onRefresh = load
         ) {
-            if (list.isEmpty()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                        .padding(20.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    empty()
-                }
+            val state = if (list.isNotEmpty()) {
+                ListState.LIST
+            } else if (loading) {
+                ListState.LOADING
             } else {
-                LazyColumn(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(innerPadding)
-                ) {
-                    items(list) { item(it) }
+                ListState.EMPTY
+            }
+
+            AnimatedContent(targetState = state) { state ->
+                when (state) {
+                    ListState.LIST -> LazyColumn(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        items(list) { item(it) }
+                    }
+
+                    ListState.LOADING -> Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .padding(20.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        empty()
+                    }
+
+                    else -> Box { }
                 }
             }
         }

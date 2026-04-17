@@ -10,6 +10,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import ua.tarch64.beejournal.services.LocationsService
@@ -21,6 +22,10 @@ import ua.tarch64.beejournal.ui.base.list.ListView
 fun LocationsView(onAdd: () -> Unit) {
     val locations by LocationsService.instance.locations.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
+
+    LaunchedEffect(Unit) {
+        LocationsService.instance.load()
+    }
 
     ListView(
         list = locations,
