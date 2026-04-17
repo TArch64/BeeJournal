@@ -41,7 +41,7 @@ fun LocationsView(
     ListView(
         list = locations,
         loading = loading,
-        load = LocationsService.instance::load,
+        load = { LocationsService.instance.load(true) },
         topBar = { TopAppBar(title = { Text("BeeJournal") }) },
         addButton = {
             ExtendedFloatingActionButton(

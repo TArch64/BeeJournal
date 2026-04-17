@@ -19,6 +19,10 @@ object LocationAddRoute {}
 data class LocationDetailsRoute(val locationId: String)
 
 fun buildRoutes(nav: NavController): NavGraphBuilder.() -> Unit = {
+    fun backHome() {
+        nav.popBackStack(route = LocationsRoute, inclusive = false)
+    }
+
     composable<LocationsRoute> {
         LocationsView(
             onAdd = { nav.navigate(LocationAddRoute) },
@@ -28,7 +32,7 @@ fun buildRoutes(nav: NavController): NavGraphBuilder.() -> Unit = {
 
     composable<LocationAddRoute> {
         LocationAddView(
-            onBack = { nav.popBackStack() },
+            onBack = ::backHome,
             onOpenLocation = { nav.navigate(LocationDetailsRoute(it.id)) }
         )
     }
@@ -38,7 +42,7 @@ fun buildRoutes(nav: NavController): NavGraphBuilder.() -> Unit = {
 
         LocationDetails(
             locationId = route.locationId,
-            onBack = { nav.popBackStack() }
+            onBack = ::backHome
         )
     }
 }

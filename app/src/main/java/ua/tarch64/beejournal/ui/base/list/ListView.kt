@@ -1,6 +1,7 @@
 package ua.tarch64.beejournal.ui.base.list
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,14 +30,14 @@ fun <T> ListView(
     empty: @Composable () -> Unit,
     item: @Composable (T) -> Unit
 ) {
-    Scaffold(
-        topBar = topBar,
-        floatingActionButton = addButton,
-    ) { innerPadding ->
-        PullToRefreshBox(
-            isRefreshing = loading,
-            onRefresh = load
-        ) {
+    PullToRefreshBox(
+        isRefreshing = loading,
+        onRefresh = load
+    ) {
+        Scaffold(
+            topBar = topBar,
+            floatingActionButton = addButton,
+        ) { innerPadding ->
             val state = if (list.isNotEmpty()) {
                 ListState.LIST
             } else if (loading) {
@@ -52,7 +53,10 @@ fun <T> ListView(
 
             AnimatedContent(targetState = state) { state ->
                 when (state) {
-                    ListState.LIST -> LazyColumn(containerModifier) {
+                    ListState.LIST -> LazyColumn(
+                        containerModifier,
+                        verticalArrangement = Arrangement.spacedBy(20.dp)
+                    ) {
                         items(list) { item(it) }
                     }
 

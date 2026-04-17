@@ -54,29 +54,29 @@ fun LocationDetails(
             ScreenState.DETAILS -> {
                 val location = location!!
 
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = { Text(location.name) },
-                            navigationIcon = {
-                                IconButton(onClick = onBack) {
-                                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "Назад")
-                                }
-                            },
-                        )
-                    },
-                ) { innerPadding ->
-                    PullToRefreshBox(
-                        isRefreshing = loading,
-                        onRefresh = ::load
-                    ) {
+                PullToRefreshBox(
+                    isRefreshing = loading,
+                    onRefresh = ::load
+                ) {
+                    Scaffold(
+                        topBar = {
+                            TopAppBar(
+                                title = { Text(location.name) },
+                                navigationIcon = {
+                                    IconButton(onClick = onBack) {
+                                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Назад")
+                                    }
+                                },
+                            )
+                        },
+                    ) { innerPadding ->
                         Box(
                             Modifier
                                 .fillMaxSize()
                                 .padding(innerPadding)
                                 .padding(20.dp)
                         ) {
-
+                            HiveMap(location = location)
                         }
                     }
                 }
