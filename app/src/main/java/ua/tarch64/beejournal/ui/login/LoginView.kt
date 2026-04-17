@@ -1,4 +1,4 @@
-package ua.tarch64.beejournal.views.login
+package ua.tarch64.beejournal.ui.login
 
 import android.app.Activity
 import android.widget.Toast
@@ -22,7 +22,7 @@ import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import kotlinx.coroutines.launch
 import ua.tarch64.beejournal.R
-import ua.tarch64.beejournal.services.fireauth.Auth
+import ua.tarch64.beejournal.services.AuthService
 
 @Composable
 @PreviewScreenSizes
@@ -44,7 +44,7 @@ fun LoginView() {
 
         try {
             val response = credentialManager.getCredential(context as Activity, request)
-            Auth.instance.handleSignIn(response.credential)
+            AuthService.instance.handleSignIn(response.credential)
         } catch (e: GetCredentialException) {
             Toast
                 .makeText(context, e.errorMessage ?: "Помилка", Toast.LENGTH_SHORT)

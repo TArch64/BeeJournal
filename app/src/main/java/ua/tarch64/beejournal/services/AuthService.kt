@@ -1,4 +1,4 @@
-package ua.tarch64.beejournal.services.fireauth
+package ua.tarch64.beejournal.services
 
 import androidx.credentials.Credential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -8,15 +8,12 @@ import com.google.firebase.auth.auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class Auth {
+class AuthService {
     private val _user = MutableStateFlow(Firebase.auth.currentUser)
     val user = _user.asStateFlow()
 
     fun handleSignIn(credential: Credential) {
-        val idToken = GoogleIdTokenCredential
-            .createFrom(credential.data)
-            .idToken
-
+        val idToken = GoogleIdTokenCredential.createFrom(credential.data).idToken
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
 
         Firebase.auth.signInWithCredential(firebaseCredential).addOnSuccessListener {
@@ -25,6 +22,6 @@ class Auth {
     }
 
     companion object {
-        val instance = Auth()
+        val instance = AuthService()
     }
 }
