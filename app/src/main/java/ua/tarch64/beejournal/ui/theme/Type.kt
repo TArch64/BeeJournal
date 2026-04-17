@@ -1,34 +1,19 @@
 package ua.tarch64.beejournal.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
+val Typography = Typography().run {
+    val scale = 1.5f
+
+    copy(
+        bodyLarge = bodyLarge.copy(fontSize = bodyLarge.fontSize * scale),
+        bodyMedium = bodyMedium.copy(fontSize = bodyMedium.fontSize * scale),
+        bodySmall = bodySmall.copy(fontSize = bodySmall.fontSize * scale),
+        titleLarge = titleLarge.copy(fontSize = titleLarge.fontSize * scale),
+        titleMedium = titleMedium.copy(fontSize = titleMedium.fontSize * scale),
+        titleSmall = titleSmall.copy(fontSize = titleSmall.fontSize * scale),
+        labelLarge = labelLarge.copy(fontSize = labelLarge.fontSize * scale),
+        labelMedium = labelMedium.copy(fontSize = labelMedium.fontSize * scale),
+        labelSmall = labelSmall.copy(fontSize = labelSmall.fontSize * scale),
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
-)
+}
