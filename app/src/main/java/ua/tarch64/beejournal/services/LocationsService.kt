@@ -45,6 +45,7 @@ class LocationsService {
     private fun newQuery(): Query {
         return collection
             .whereArrayContains("owners", uid)
+            .whereEqualTo("deleted", false)
             .orderBy("createdAt", Query.Direction.DESCENDING)
     }
 
@@ -56,6 +57,11 @@ class LocationsService {
 
         val document = collection.add(location).await()
         return location.copy(id = document.id)
+    }
+
+    fun delete(location: LocationModel) {
+        location.deleted = true
+        collection.document(location.id).set(location)
     }
 
     companion object {

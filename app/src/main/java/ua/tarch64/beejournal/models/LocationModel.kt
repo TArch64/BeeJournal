@@ -6,11 +6,12 @@ import com.google.firebase.firestore.ServerTimestamp
 
 data class LocationModel(
     @DocumentId
-    var id: String = "",
+    override var id: String = "",
 
     var name: String = "",
+    var deleted: Boolean = false,
     var owners: List<String> = emptyList(),
 
     @ServerTimestamp
     var createdAt: Timestamp = Timestamp.now()
-)
+) : Identifiable

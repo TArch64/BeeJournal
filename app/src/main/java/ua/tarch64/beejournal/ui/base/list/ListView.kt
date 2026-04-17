@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import ua.tarch64.beejournal.models.Identifiable
 
 private enum class ListState {
     LIST,
@@ -21,7 +22,7 @@ private enum class ListState {
 }
 
 @Composable
-fun <T> ListView(
+fun <T : Identifiable> ListView(
     list: List<T>,
     loading: Boolean,
     load: () -> Unit,
@@ -57,7 +58,11 @@ fun <T> ListView(
                         containerModifier,
                         verticalArrangement = Arrangement.spacedBy(20.dp)
                     ) {
-                        items(list) { item(it) }
+                        items(list, key = { it.id }) {
+                            Box(modifier = Modifier.animateItem()) {
+                                item(it)
+                            }
+                        }
                     }
 
                     ListState.EMPTY -> Box(
