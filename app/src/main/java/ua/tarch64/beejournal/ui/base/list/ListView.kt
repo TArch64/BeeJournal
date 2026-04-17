@@ -47,21 +47,19 @@ fun <T> ListView(
                 ListState.EMPTY
             }
 
+            val containerModifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(20.dp)
+
             AnimatedContent(targetState = state) { state ->
                 when (state) {
-                    ListState.LIST -> LazyColumn(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
+                    ListState.LIST -> LazyColumn(containerModifier) {
                         items(list) { item(it) }
                     }
 
                     ListState.LOADING -> Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                            .padding(20.dp),
+                        modifier = containerModifier,
                         contentAlignment = Alignment.Center
                     ) {
                         empty()
