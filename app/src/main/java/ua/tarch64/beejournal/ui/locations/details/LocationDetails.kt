@@ -14,13 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ua.tarch64.beejournal.services.ActiveLocationService
+import ua.tarch64.beejournal.services.HivesService
 
 private enum class ScreenState {
     DETAILS,
@@ -34,16 +35,22 @@ fun LocationDetails(
     locationId: String,
     onBack: () -> Unit
 ) {
-    val loading by ActiveLocationService.instance.loading.collectAsState()
     val location by ActiveLocationService.instance.location.collectAsState()
-    val error by ActiveLocationService.instance.error.collectAsState()
-    fun load() = ActiveLocationService.instance.load(locationId)
+    val locationLoading by ActiveLocationService.instance.loading.collectAsState()
+    val locationError by ActiveLocationService.instance.error.collectAsState()
 
-    LaunchedEffect(Unit) { load() }
+    val hives by HivesService.instance.list.collectAsState()
+    val hivesLoading by HivesService.instance.loading.collectAsState()
+    val hivesError by HivesService.instance.error.collectAsState()
+
+    DisposableEffect(Unit) {
+        ActiveLocationService.instance.load(locationId)
+        onDispose { ActiveLocationService.instance.unload() }
+    }
 
     val state = if (location != null) {
         ScreenState.DETAILS
-    } else if (loading) {
+    } else if (locationLoading || hivesLoading) {
         ScreenState.LOADING
     } else {
         ScreenState.ERROR
@@ -55,8 +62,8 @@ fun LocationDetails(
                 val location = location!!
 
                 PullToRefreshBox(
-                    isRefreshing = loading,
-                    onRefresh = ::load
+                    isRefreshing = locationLoading,
+                    onRefresh = { ActiveLocationService.instance.load(locationId, force = true) }
                 ) {
                     Scaffold(
                         topBar = {
@@ -76,14 +83,14 @@ fun LocationDetails(
                                 .padding(innerPadding)
                                 .padding(20.dp)
                         ) {
-                            HiveMap(location = location)
+                            HiveMap(hives = hives)
                         }
                     }
                 }
             }
 
             ScreenState.LOADING -> TextView("Завантажується...")
-            ScreenState.ERROR -> TextView(error)
+            ScreenState.ERROR -> TextView(locationError.ifEmpty { hivesError })
         }
     }
 }

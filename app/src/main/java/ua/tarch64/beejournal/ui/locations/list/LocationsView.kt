@@ -9,7 +9,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import ua.tarch64.beejournal.models.LocationModel
@@ -23,11 +23,12 @@ fun LocationsView(
     onAdd: () -> Unit,
     onOpenLocation: (location: LocationModel) -> Unit
 ) {
-    val locations by LocationsService.instance.locations.collectAsState()
+    val locations by LocationsService.instance.list.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
 
-    LaunchedEffect(Unit) {
+    DisposableEffect(Unit) {
         LocationsService.instance.load()
+        onDispose { LocationsService.instance.unload() }
     }
 
     ListView(
