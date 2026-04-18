@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.services.LocationsService
+import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
 import ua.tarch64.beejournal.ui.base.form.FormView
 
 @Composable
@@ -19,14 +20,21 @@ fun LocationAddView(
     onOpen: (location: LocationModel) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<Exception?>(null) }
 
     suspend fun addLocation() {
-        val location = LocationsService.instance.add(
-            LocationModel(name = name)
-        )
+        try {
+            val location = LocationsService.instance.add(
+                LocationModel(name = name)
+            )
 
-        onOpen(location)
+            onOpen(location)
+        } catch (e: Exception) {
+            error = e
+        }
     }
+
+    ErrorReport(error)
 
     FormView(
         title = "Нове Місце",
