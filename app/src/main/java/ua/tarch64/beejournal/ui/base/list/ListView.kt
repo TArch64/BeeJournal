@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ua.tarch64.beejournal.models.Identifiable
@@ -65,10 +64,7 @@ fun <T : Identifiable> ListView(
                         }
                     }
 
-                    ListState.EMPTY -> Box(
-                        modifier = containerModifier,
-                        contentAlignment = Alignment.Center
-                    ) {
+                    ListState.EMPTY -> Box(modifier = containerModifier) {
                         empty()
                     }
 
