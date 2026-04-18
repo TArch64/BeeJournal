@@ -22,7 +22,7 @@ android {
         //noinspection OldTargetApi
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.5"
     }
     signingConfigs {
         val keystoreProperties = Properties().apply {
@@ -80,4 +80,14 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.kotlinx.serialization.json)
+}
+
+tasks.register("buildRelease") {
+    dependsOn("assembleRelease")
+    doLast {
+        val version = android.defaultConfig.versionName
+        val from = file("build/outputs/apk/release/app-release.apk")
+        val to = file("build/outputs/apk/release/BeeJournal-${version}.apk")
+        from.copyTo(to, overwrite = true)
+    }
 }
