@@ -8,6 +8,14 @@ plugins {
     alias(libs.plugins.firebase.crashlytics)
 }
 
+val versionFile = file("version.properties")
+
+val versionProps = Properties().apply {
+    versionFile.inputStream().use { load(it) }
+}
+
+val code = versionProps["versionCode"].toString().toInt()
+
 android {
     namespace = "ua.tarch64.beejournal"
     compileSdk {
@@ -21,8 +29,8 @@ android {
         minSdk = 31
         //noinspection OldTargetApi
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.5"
+        versionCode = code
+        versionName = "$code"
     }
     signingConfigs {
         val keystoreProperties = Properties().apply {
@@ -84,10 +92,15 @@ dependencies {
 
 tasks.register("buildRelease") {
     dependsOn("assembleRelease")
+    doFirst {
+        versionProps["versionCode"] = (code + 1).toString()
+        versionFile.outputStream().use { versionProps.store(it, null) }
+    }
     doLast {
         val version = android.defaultConfig.versionName
         val from = file("build/outputs/apk/release/app-release.apk")
         val to = file("build/outputs/apk/release/BeeJournal-${version}.apk")
         from.copyTo(to, overwrite = true)
+        from.delete()
     }
 }
