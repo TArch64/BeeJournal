@@ -30,6 +30,10 @@ class LocationsService : CollectionService<LocationModel>() {
         return location.apply { id = document.id }
     }
 
+    suspend fun update(location: LocationModel) {
+        collection.document(location.id).set(location).await()
+    }
+
     fun delete(location: LocationModel) {
         location.deleted = true
         collection.document(location.id).set(location)

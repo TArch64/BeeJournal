@@ -3,6 +3,7 @@ package ua.tarch64.beejournal.ui.locations.list
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
@@ -31,11 +32,23 @@ fun LocationView(
 ) {
     val scope = rememberCoroutineScope()
     val shareState = rememberModalBottomSheetState()
+    val editState = rememberModalBottomSheetState()
 
     ContextMenu(
         onClick = onOpen,
 
         actions = { onClick ->
+            DropdownMenuItem(
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Редагувати"
+                    )
+                },
+                text = { Text("Редагувати") },
+                onClick = onClick { scope.launch { editState.show() } }
+            )
+
             DropdownMenuItem(
                 leadingIcon = {
                     Icon(
@@ -81,6 +94,18 @@ fun LocationView(
             LocationShareView(
                 location = location,
                 onBack = { scope.launch { shareState.hide() } }
+            )
+        }
+    }
+
+    if (editState.isVisible || editState.isAnimationRunning) {
+        ModalBottomSheet(
+            sheetState = editState,
+            onDismissRequest = { scope.launch { editState.hide() } }
+        ) {
+            LocationEditView(
+                location = location,
+                onBack = { scope.launch { editState.hide() } }
             )
         }
     }
