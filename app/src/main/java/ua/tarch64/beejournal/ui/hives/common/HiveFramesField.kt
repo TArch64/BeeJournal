@@ -25,26 +25,20 @@ import ua.tarch64.beejournal.ui.base.form.LabelRow
 @Composable
 fun HiveFramesField(
     modifier: Modifier = Modifier,
-    value: List<UInt>,
-    onValueChange: (value: List<UInt>) -> Unit
+    value: List<Int>,
+    onValueChange: (value: List<Int>) -> Unit
 ) {
     fun change(index: Int, frames: Int) {
-        val updated = value.toMutableList().apply {
-            set(index, frames.toUInt())
-        }
-
+        val updated = value.toMutableList().apply { set(index, frames) }
         onValueChange(updated)
     }
 
     fun add() {
-        onValueChange(value.plus(0.toUInt()))
+        onValueChange(value.plus(0))
     }
 
     fun remove(index: Int) {
-        val updated = value.toMutableList().apply {
-            removeAt(index = index)
-        }
-
+        val updated = value.toMutableList().apply { removeAt(index = index) }
         onValueChange(updated)
     }
 
@@ -78,7 +72,7 @@ fun HiveFramesField(
                     }
                 ) {
                     CounterField(
-                        value = frames.toInt(),
+                        value = frames,
                         minValue = 0,
                         maxValue = 99,
                         onValueChange = { change(index, it) }

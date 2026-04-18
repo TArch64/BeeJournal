@@ -21,7 +21,10 @@ fun LocationAddView(
     var name by remember { mutableStateOf("") }
 
     suspend fun addLocation() {
-        val location = LocationsService.instance.add(name)
+        val location = LocationsService.instance.add(
+            LocationModel(name = name)
+        )
+
         onOpen(location)
     }
 

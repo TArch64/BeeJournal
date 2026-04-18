@@ -23,14 +23,10 @@ class LocationsService : CollectionService<LocationModel>() {
         return snapshot.toObjects<LocationModel>()
     }
 
-    suspend fun add(name: String): LocationModel {
-        val location = LocationModel(
-            name = name,
-            owners = listOf(uid)
-        )
-
+    suspend fun add(location: LocationModel): LocationModel {
+        location.owners = listOf(uid)
         val document = collection.add(location).await()
-        return location.copy(id = document.id)
+        return location.apply { id = document.id }
     }
 
     fun delete(location: LocationModel) {

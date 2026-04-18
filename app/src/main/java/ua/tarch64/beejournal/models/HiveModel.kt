@@ -10,10 +10,10 @@ data class HiveModel(
     @DocumentId
     override var id: String = "",
 
-    var position: UInt = 0.toUInt(),
-    var frames: List<UInt> = listOf(0.toUInt()),
-    var children: UInt = 0.toUInt(),
-    var honey: UInt = 0.toUInt(),
+    var position: Int = 0,
+    var frames: List<Int> = listOf(0),
+    var children: Int = 0,
+    var honey: Int = 0,
 
     @get:PropertyName("color")
     @set:PropertyName("color")

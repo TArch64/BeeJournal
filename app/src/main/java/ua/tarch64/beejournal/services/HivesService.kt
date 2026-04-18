@@ -6,13 +6,14 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
+import kotlinx.coroutines.tasks.await
 import ua.tarch64.beejournal.models.HiveModel
 
 class HivesService : CollectionService<HiveModel>() {
     private var collection: CollectionReference? = null
     override val query: Query get() = collection!!.orderBy("position")
 
-    val nextPosition: UInt get() = list.value.size.plus(1).toUInt()
+    val nextPosition: Int get() = list.value.size.plus(1)
 
     fun load(locationId: String, force: Boolean = false) {
         collection = collection ?: Firebase.firestore
@@ -30,6 +31,10 @@ class HivesService : CollectionService<HiveModel>() {
     override fun unload() {
         super.unload()
         collection = null
+    }
+
+    suspend fun add(hive: HiveModel) {
+        collection!!.add(hive).await()
     }
 
     companion object {

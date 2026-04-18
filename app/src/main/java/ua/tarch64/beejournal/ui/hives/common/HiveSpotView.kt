@@ -21,7 +21,7 @@ import ua.tarch64.beejournal.models.lighten
 
 @Composable
 fun HiveSpotView(
-    position: UInt,
+    position: Int,
     color: Color,
     onClick: () -> Unit = {},
 ) {

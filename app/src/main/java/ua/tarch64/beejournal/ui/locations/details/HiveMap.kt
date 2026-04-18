@@ -15,7 +15,7 @@ import ua.tarch64.beejournal.ui.hives.common.HiveSpotView
 @Composable
 fun HiveMap(hives: List<HiveModel>) {
     LazyVerticalGrid(
-        columns = GridCells.FixedSize(80.dp),
+        columns = GridCells.FixedSize(60.dp),
         modifier = Modifier.fillMaxSize(),
         horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
         verticalArrangement = Arrangement.spacedBy(32.dp)
