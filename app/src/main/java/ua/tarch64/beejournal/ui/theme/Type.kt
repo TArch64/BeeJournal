@@ -9,7 +9,7 @@ val Typography = Typography().run {
         bodyLarge = bodyLarge.copy(fontSize = bodyLarge.fontSize * scale),
         bodyMedium = bodyMedium.copy(fontSize = bodyMedium.fontSize * scale),
         bodySmall = bodySmall.copy(fontSize = bodySmall.fontSize * scale),
-        titleLarge = titleLarge.copy(fontSize = titleLarge.fontSize * scale),
+        titleLarge = titleLarge.copy(fontSize = titleLarge.fontSize * 1.3f),
         titleMedium = titleMedium.copy(fontSize = titleMedium.fontSize * scale),
         titleSmall = titleSmall.copy(fontSize = titleSmall.fontSize * scale),
         labelLarge = labelLarge.copy(fontSize = labelLarge.fontSize * scale),

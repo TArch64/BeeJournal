@@ -15,15 +15,17 @@ import ua.tarch64.beejournal.services.HivesService
 import ua.tarch64.beejournal.ui.base.form.ColorSwatches
 import ua.tarch64.beejournal.ui.base.form.CounterField
 import ua.tarch64.beejournal.ui.base.form.FormView
-import ua.tarch64.beejournal.ui.base.form.LabelRow
+import ua.tarch64.beejournal.ui.base.form.OutlinedLabelRow
+import ua.tarch64.beejournal.ui.hives.common.HiveFramesField
 import ua.tarch64.beejournal.ui.hives.common.HiveSpotView
 
 @Composable
 fun HiveAddView(onBack: () -> Unit) {
     val position = remember { HivesService.instance.nextPosition }
-    var color by remember { mutableStateOf(Color.White) }
+    var frames by remember { mutableStateOf(listOf(0.toUInt())) }
     var children by remember { mutableStateOf(0.toUInt()) }
     var honey by remember { mutableStateOf(0.toUInt()) }
+    var color by remember { mutableStateOf(Color.White) }
 
     suspend fun addHive() {
         onBack()
@@ -47,7 +49,12 @@ fun HiveAddView(onBack: () -> Unit) {
             onValueChange = { color = it }
         )
 
-        LabelRow(label = "Розплід") {
+        HiveFramesField(
+            value = frames,
+            onValueChange = { frames = it }
+        )
+
+        OutlinedLabelRow(label = { Text("Розплід") }) {
             CounterField(
                 value = children.toInt(),
                 minValue = 0,
@@ -56,7 +63,7 @@ fun HiveAddView(onBack: () -> Unit) {
             )
         }
 
-        LabelRow(label = "Мед") {
+        OutlinedLabelRow(label = { Text("Мед") }) {
             CounterField(
                 value = honey.toInt(),
                 minValue = 0,
