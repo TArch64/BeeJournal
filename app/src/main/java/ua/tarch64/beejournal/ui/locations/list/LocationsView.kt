@@ -1,5 +1,6 @@
 package ua.tarch64.beejournal.ui.locations.list
 
+import android.widget.Toast
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Place
@@ -10,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.services.LocationsService
 import ua.tarch64.beejournal.ui.base.list.ListEmpty
@@ -23,12 +26,22 @@ fun LocationsView(
     onAdd: () -> Unit,
     onOpenLocation: (location: LocationModel) -> Unit
 ) {
+    val context = LocalContext.current
     val locations by LocationsService.instance.list.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
+    val error by LocationsService.instance.error.collectAsState()
 
     DisposableEffect(Unit) {
         LocationsService.instance.load()
         onDispose { LocationsService.instance.unload() }
+    }
+
+    LaunchedEffect(error) {
+        if (error.isNotEmpty()) {
+            Toast
+                .makeText(context, error, Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     ListView(
