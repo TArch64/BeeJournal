@@ -2,7 +2,6 @@ package ua.tarch64.beejournal.ui.hives.add
 
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -14,14 +13,17 @@ import androidx.compose.ui.graphics.Color
 import ua.tarch64.beejournal.models.HiveModel
 import ua.tarch64.beejournal.services.HivesService
 import ua.tarch64.beejournal.ui.base.form.ColorSwatches
+import ua.tarch64.beejournal.ui.base.form.CounterField
 import ua.tarch64.beejournal.ui.base.form.FormView
+import ua.tarch64.beejournal.ui.base.form.LabelRow
 import ua.tarch64.beejournal.ui.hives.common.HiveSpotView
 
 @Composable
 fun HiveAddView(onBack: () -> Unit) {
     val position = remember { HivesService.instance.nextPosition }
     var color by remember { mutableStateOf(Color.White) }
-    var name by remember { mutableStateOf("") }
+    var children by remember { mutableStateOf(0.toUInt()) }
+    var honey by remember { mutableStateOf(0.toUInt()) }
 
     suspend fun addHive() {
         onBack()
@@ -45,11 +47,22 @@ fun HiveAddView(onBack: () -> Unit) {
             onValueChange = { color = it }
         )
 
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        LabelRow(label = "Розплід") {
+            CounterField(
+                value = children.toInt(),
+                minValue = 0,
+                maxValue = 99,
+                onValueChange = { children = it.toUInt() }
+            )
+        }
+
+        LabelRow(label = "Мед") {
+            CounterField(
+                value = honey.toInt(),
+                minValue = 0,
+                maxValue = 99,
+                onValueChange = { honey = it.toUInt() }
+            )
+        }
     }
 }

@@ -24,7 +24,7 @@ fun ColorSwatches(
     onValueChange: (Color) -> Unit
 ) {
     FlowRow(
-        modifier = modifier.padding(vertical = 8.dp),
+        modifier = modifier.padding(vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

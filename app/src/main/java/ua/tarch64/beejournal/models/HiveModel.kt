@@ -11,6 +11,8 @@ data class HiveModel(
     override var id: String = "",
 
     var position: UInt = 0.toUInt(),
+    var children: UInt = 0.toUInt(),
+    var honey: UInt = 0.toUInt(),
 
     @get:PropertyName("color")
     @set:PropertyName("color")
