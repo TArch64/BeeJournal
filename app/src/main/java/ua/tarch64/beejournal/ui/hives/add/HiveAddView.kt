@@ -1,4 +1,5 @@
-package ua.tarch64.beejournal.ui.locations.add
+package ua.tarch64.beejournal.ui.hives.add
+
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.OutlinedTextField
@@ -9,26 +10,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import ua.tarch64.beejournal.models.LocationModel
-import ua.tarch64.beejournal.services.LocationsService
 import ua.tarch64.beejournal.ui.base.form.FormView
 
 @Composable
-fun LocationAddView(
-    onBack: () -> Unit,
-    onOpen: (location: LocationModel) -> Unit
-) {
+fun HiveAddView(onBack: () -> Unit) {
     var name by remember { mutableStateOf("") }
 
-    suspend fun addLocation() {
-        val location = LocationsService.instance.add(name)
-        onOpen(location)
+    suspend fun addHive() {
+        onBack()
     }
 
     FormView(
-        title = "Нове Місце",
+        title = "Новий Вулик",
         onBack = onBack,
-        onSave = ::addLocation,
+        onSave = ::addHive,
         saveLabel = { Text("Додати") },
     ) {
         OutlinedTextField(

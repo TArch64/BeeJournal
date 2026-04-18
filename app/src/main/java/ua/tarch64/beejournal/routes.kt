@@ -26,14 +26,14 @@ fun buildRoutes(nav: NavController): NavGraphBuilder.() -> Unit = {
     composable<LocationsRoute> {
         LocationsView(
             onAdd = { nav.navigate(LocationAddRoute) },
-            onOpenLocation = { nav.navigate(LocationDetailsRoute(it.id)) }
+            onOpen = { nav.navigate(LocationDetailsRoute(it.id)) }
         )
     }
 
     composable<LocationAddRoute> {
         LocationAddView(
             onBack = ::backHome,
-            onOpenLocation = { nav.navigate(LocationDetailsRoute(it.id)) }
+            onOpen = { nav.navigate(LocationDetailsRoute(it.id)) }
         )
     }
 

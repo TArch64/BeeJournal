@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -31,6 +33,7 @@ fun DetailsLayout(
     location: LocationModel?,
     onLoad: () -> Unit,
     onBack: () -> Unit,
+    onAdd: () -> Unit,
     contentLoading: @Composable () -> Unit,
     contentError: @Composable () -> Unit,
     content: @Composable () -> Unit
@@ -58,6 +61,13 @@ fun DetailsLayout(
                     },
                 )
             },
+            floatingActionButton = {
+                ExtendedFloatingActionButton(
+                    onClick = onAdd,
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Додати Вулик") },
+                    text = { Text("Додати") }
+                )
+            }
         ) { innerPadding ->
             Box(
                 Modifier

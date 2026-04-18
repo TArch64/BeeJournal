@@ -22,7 +22,7 @@ import ua.tarch64.beejournal.ui.base.list.ListView
 @OptIn(ExperimentalMaterial3Api::class)
 fun LocationsView(
     onAdd: () -> Unit,
-    onOpenLocation: (location: LocationModel) -> Unit
+    onOpen: (location: LocationModel) -> Unit
 ) {
     val locations by LocationsService.instance.list.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
@@ -57,7 +57,7 @@ fun LocationsView(
     ) { location ->
         LocationView(
             location = location,
-            onOpen = { onOpenLocation(location) },
+            onOpen = { onOpen(location) },
             onDelete = { LocationsService.instance.delete(location) }
         )
     }
