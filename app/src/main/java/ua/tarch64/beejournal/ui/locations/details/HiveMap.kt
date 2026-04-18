@@ -13,7 +13,10 @@ import ua.tarch64.beejournal.models.HiveModel
 import ua.tarch64.beejournal.ui.hives.common.HiveSpotView
 
 @Composable
-fun HiveMap(hives: List<HiveModel>) {
+fun HiveMap(
+    hives: List<HiveModel>,
+    onEdit: (hive: HiveModel) -> Unit
+) {
     LazyVerticalGrid(
         columns = GridCells.FixedSize(60.dp),
         modifier = Modifier.fillMaxSize(),
@@ -24,6 +27,7 @@ fun HiveMap(hives: List<HiveModel>) {
             HiveSpotView(
                 position = hive.position,
                 color = hive.color,
+                onClick = { onEdit(hive) }
             )
         }
     }

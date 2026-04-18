@@ -37,6 +37,10 @@ class HivesService : CollectionService<HiveModel>() {
         collection!!.add(hive).await()
     }
 
+    suspend fun update(hive: HiveModel) {
+        collection!!.document(hive.id).set(hive).await()
+    }
+
     companion object {
         val instance = HivesService()
     }
