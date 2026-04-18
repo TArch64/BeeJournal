@@ -21,11 +21,13 @@ import ua.tarch64.beejournal.services.AuthService
 import ua.tarch64.beejournal.ui.login.LoginView
 import ua.tarch64.beejournal.ui.theme.BeeJournalTheme
 
+const val NAV_DURATION = 350
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-       
+
         @Suppress("KotlinConstantConditions")
         Firebase.crashlytics.isCrashlyticsCollectionEnabled = !BuildConfig.DEBUG
 
@@ -53,10 +55,10 @@ fun BeeJournalApp() {
         NavHost(
             navController = navController,
             startDestination = LocationsRoute,
-            enterTransition = { slideInHorizontally(tween(500)) { it } },
-            exitTransition = { slideOutHorizontally(tween(500)) { -it } },
-            popEnterTransition = { slideInHorizontally(tween(500)) { -it } },
-            popExitTransition = { slideOutHorizontally(tween(500)) { it } },
+            enterTransition = { slideInHorizontally(tween(NAV_DURATION)) { it } },
+            exitTransition = { slideOutHorizontally(tween(NAV_DURATION)) { -it } },
+            popEnterTransition = { slideInHorizontally(tween(NAV_DURATION)) { -it } },
+            popExitTransition = { slideOutHorizontally(tween(NAV_DURATION)) { it } },
             builder = buildRoutes(navController)
         )
     }

@@ -12,6 +12,8 @@ class HivesService : CollectionService<HiveModel>() {
     private var collection: CollectionReference? = null
     override val query: Query get() = collection!!.orderBy("position")
 
+    val nextPosition: UInt get() = list.value.size.plus(1).toUInt()
+
     fun load(locationId: String, force: Boolean = false) {
         collection = collection ?: Firebase.firestore
             .collection("locations")
