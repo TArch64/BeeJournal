@@ -1,6 +1,5 @@
 package ua.tarch64.beejournal.ui.locations.details
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,15 +15,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import ua.tarch64.beejournal.services.ActiveLocationService
 import ua.tarch64.beejournal.services.HivesService
+import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
 
 private enum class ScreenState {
     DETAILS,
@@ -38,8 +36,6 @@ fun LocationDetails(
     locationId: String,
     onBack: () -> Unit
 ) {
-    val context = LocalContext.current
-
     val location by ActiveLocationService.instance.location.collectAsState()
     val locationLoading by ActiveLocationService.instance.loading.collectAsState()
     val locationError by ActiveLocationService.instance.error.collectAsState()
@@ -56,13 +52,7 @@ fun LocationDetails(
         onDispose { ActiveLocationService.instance.unload() }
     }
 
-    LaunchedEffect(error) {
-        if (error.isNotEmpty()) {
-            Toast
-                .makeText(context, error, Toast.LENGTH_SHORT)
-                .show()
-        }
-    }
+    ErrorReport(error)
 
     val state = if (location != null) {
         ScreenState.DETAILS
