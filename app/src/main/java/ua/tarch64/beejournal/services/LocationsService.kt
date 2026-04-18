@@ -36,7 +36,7 @@ class LocationsService : CollectionService<LocationModel>() {
     }
 
     fun share(location: LocationModel, user: UserModel) {
-        location.owners = location.owners.plus(user.email)
+        location.owners = location.owners.plus(user.id)
         collection.document(location.id).set(location)
     }
 
