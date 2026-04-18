@@ -1,4 +1,4 @@
-package ua.tarch64.beejournal.ui.hives.common
+package ua.tarch64.beejournal.ui.locations.details.hives.common
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

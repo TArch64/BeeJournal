@@ -45,7 +45,7 @@ fun LocationAddView(
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Name") },
+            label = { Text("Назва") },
             modifier = Modifier.fillMaxWidth()
         )
     }

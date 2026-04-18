@@ -30,8 +30,8 @@ import ua.tarch64.beejournal.services.ActiveLocationService
 import ua.tarch64.beejournal.services.HivesService
 import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
 import ua.tarch64.beejournal.ui.base.list.ListEmpty
-import ua.tarch64.beejournal.ui.hives.add.HiveAddView
-import ua.tarch64.beejournal.ui.hives.edit.HiveEditView
+import ua.tarch64.beejournal.ui.locations.details.hives.add.HiveAddView
+import ua.tarch64.beejournal.ui.locations.details.hives.edit.HiveEditView
 
 
 @Composable

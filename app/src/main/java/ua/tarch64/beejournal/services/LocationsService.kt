@@ -7,6 +7,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.tasks.await
 import ua.tarch64.beejournal.models.LocationModel
+import ua.tarch64.beejournal.models.UserModel
 
 class LocationsService : CollectionService<LocationModel>() {
     private val collection = Firebase.firestore.collection("locations")
@@ -31,6 +32,11 @@ class LocationsService : CollectionService<LocationModel>() {
 
     fun delete(location: LocationModel) {
         location.deleted = true
+        collection.document(location.id).set(location)
+    }
+
+    fun share(location: LocationModel, user: UserModel) {
+        location.owners = location.owners.plus(user.email)
         collection.document(location.id).set(location)
     }
 

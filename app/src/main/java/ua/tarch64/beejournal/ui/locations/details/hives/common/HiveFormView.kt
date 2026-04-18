@@ -1,4 +1,4 @@
-package ua.tarch64.beejournal.ui.hives.common
+package ua.tarch64.beejournal.ui.locations.details.hives.common
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text

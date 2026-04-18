@@ -1,9 +1,9 @@
-package ua.tarch64.beejournal.ui.hives.edit
+package ua.tarch64.beejournal.ui.locations.details.hives.edit
 
 import androidx.compose.runtime.Composable
 import ua.tarch64.beejournal.models.HiveModel
 import ua.tarch64.beejournal.services.HivesService
-import ua.tarch64.beejournal.ui.hives.common.HiveFormView
+import ua.tarch64.beejournal.ui.locations.details.hives.common.HiveFormView
 
 @Composable
 fun HiveEditView(

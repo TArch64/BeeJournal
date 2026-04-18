@@ -1,10 +1,10 @@
-package ua.tarch64.beejournal.ui.hives.add
+package ua.tarch64.beejournal.ui.locations.details.hives.add
 
 
 import androidx.compose.runtime.Composable
 import ua.tarch64.beejournal.models.HiveModel
 import ua.tarch64.beejournal.services.HivesService
-import ua.tarch64.beejournal.ui.hives.common.HiveFormView
+import ua.tarch64.beejournal.ui.locations.details.hives.common.HiveFormView
 
 @Composable
 fun HiveAddView(onBack: () -> Unit) {

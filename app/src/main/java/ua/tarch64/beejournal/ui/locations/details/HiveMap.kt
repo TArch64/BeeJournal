@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ua.tarch64.beejournal.models.HiveModel
-import ua.tarch64.beejournal.ui.hives.common.HiveSpotView
+import ua.tarch64.beejournal.ui.locations.details.hives.common.HiveSpotView
 
 @Composable
 fun HiveMap(
