@@ -9,13 +9,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.google.firebase.Firebase
+import com.google.firebase.crashlytics.crashlytics
 
 @Composable
-fun ErrorReport(error: String) {
+fun ErrorReport(error: Exception?) {
     var displaying by remember { mutableStateOf(false) }
 
     LaunchedEffect(error) {
-        displaying = error.isNotEmpty()
+        displaying = error != null
+
+        if (displaying) {
+            Firebase.crashlytics.recordException(error!!)
+        }
     }
 
     fun onDismiss() {
@@ -23,9 +29,11 @@ fun ErrorReport(error: String) {
     }
 
     if (displaying) {
+        val error = error!!
+
         AlertDialog(
             title = { Text("Помилка") },
-            text = { Text(error) },
+            text = { Text(error.message ?: "") },
             onDismissRequest = ::onDismiss,
 
             confirmButton = {

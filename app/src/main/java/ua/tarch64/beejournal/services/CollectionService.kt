@@ -11,7 +11,7 @@ import ua.tarch64.beejournal.models.Identifiable
 abstract class CollectionService<V : Identifiable> {
     private val _list = MutableStateFlow(emptyList<V>())
     private val _loading = MutableStateFlow(true)
-    private val _error = MutableStateFlow("")
+    private val _error = MutableStateFlow<Exception?>(null)
     private var listener: ListenerRegistration? = null
 
     protected abstract val query: Query
@@ -28,7 +28,7 @@ abstract class CollectionService<V : Identifiable> {
                 if (snapshots != null) {
                     _list.value = decode(snapshots)
                 }
-                _error.value = exception?.message ?: ""
+                _error.value = exception
                 _loading.value = false
             }
         } else if (force) {

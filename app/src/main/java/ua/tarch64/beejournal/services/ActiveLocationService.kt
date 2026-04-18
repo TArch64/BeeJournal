@@ -25,6 +25,7 @@ class ActiveLocationService : DocumentService<LocationModel>() {
 
     override fun unload() {
         super.unload()
+        document = null
         HivesService.instance.unload()
     }
 

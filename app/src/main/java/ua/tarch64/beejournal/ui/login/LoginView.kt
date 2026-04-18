@@ -33,7 +33,7 @@ fun LoginView() {
     val scope = rememberCoroutineScope()
     val credentialManager = remember { CredentialManager.create(context) }
     val serverClientId = stringResource(R.string.default_web_client_id)
-    var error by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<Exception?>(null) }
 
     suspend fun login() {
         val googleIdOption = GetGoogleIdOption.Builder()
@@ -49,7 +49,7 @@ fun LoginView() {
             val response = credentialManager.getCredential(context as Activity, request)
             AuthService.instance.handleSignIn(response.credential)
         } catch (e: Exception) {
-            error = e.message ?: ""
+            error = e
         }
     }
 

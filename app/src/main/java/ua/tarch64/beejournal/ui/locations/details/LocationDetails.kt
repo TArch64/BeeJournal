@@ -36,7 +36,7 @@ fun LocationDetails(
     locationId: String,
     onBack: () -> Unit
 ) {
-    val location by ActiveLocationService.instance.location.collectAsState()
+    val location by ActiveLocationService.instance.data.collectAsState()
     val locationLoading by ActiveLocationService.instance.loading.collectAsState()
     val locationError by ActiveLocationService.instance.error.collectAsState()
 
@@ -45,7 +45,7 @@ fun LocationDetails(
     val hivesError by HivesService.instance.error.collectAsState()
 
     val loading = locationLoading || hivesLoading
-    val error = locationError.ifEmpty { hivesError }
+    val error = locationError?.let { hivesError }
 
     DisposableEffect(Unit) {
         ActiveLocationService.instance.load(locationId)
@@ -96,7 +96,7 @@ fun LocationDetails(
             }
 
             ScreenState.LOADING -> TextView("Завантажується...")
-            ScreenState.ERROR -> TextView(error)
+            ScreenState.ERROR -> TextView(error?.message ?: "")
         }
     }
 }

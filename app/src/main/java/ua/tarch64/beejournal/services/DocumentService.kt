@@ -10,12 +10,12 @@ import ua.tarch64.beejournal.models.Identifiable
 
 abstract class DocumentService<V : Identifiable> {
     private val _loading = MutableStateFlow(true)
-    private val _location = MutableStateFlow<V?>(null)
-    private val _error = MutableStateFlow("")
+    private val _data = MutableStateFlow<V?>(null)
+    private val _error = MutableStateFlow<Exception?>(null)
     private var listener: ListenerRegistration? = null
 
     val loading = _loading.asStateFlow()
-    val location = _location.asStateFlow()
+    val data = _data.asStateFlow()
     val error = _error.asStateFlow()
 
     protected abstract val document: DocumentReference?
@@ -28,9 +28,9 @@ abstract class DocumentService<V : Identifiable> {
 
             listener = document.addSnapshotListener { snapshot, exception ->
                 if (snapshot != null) {
-                    _location.value = decode(snapshot)
+                    _data.value = decode(snapshot)
                 }
-                _error.value = exception?.message ?: ""
+                _error.value = exception
                 _loading.value = false
             }
         } else if (force) {
