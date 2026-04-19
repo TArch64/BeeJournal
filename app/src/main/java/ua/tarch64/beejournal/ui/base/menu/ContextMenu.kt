@@ -1,54 +1,99 @@
 package ua.tarch64.beejournal.ui.base.menu
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.DropdownMenu
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-typealias ClickHandler = () -> Unit
-typealias ClickDecorator = (action: ClickHandler) -> ClickHandler
+@OptIn(ExperimentalMaterial3Api::class)
+class ContextMenuScope(
+    private val scope: CoroutineScope,
+    private val sheetState: SheetState
+) {
+    val items = mutableListOf<@Composable () -> Unit>()
+
+    fun action(
+        title: String,
+        icon: ImageVector? = null,
+        destructive: Boolean = false,
+        onClick: suspend () -> Unit
+    ) {
+        items.add {
+            ListItem(
+                headlineContent = { Text(title) },
+                leadingContent = icon?.let { { Icon(it, title) } },
+                colors = if (destructive) {
+                    ListItemDefaults.colors(
+                        headlineColor = MaterialTheme.colorScheme.error,
+                        leadingIconColor = MaterialTheme.colorScheme.error
+                    )
+                } else {
+                    ListItemDefaults.colors()
+                },
+                modifier = Modifier.clickable {
+                    scope.launch {
+                        sheetState.hide()
+                        onClick()
+                    }
+                }
+            )
+        }
+    }
+}
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun ContextMenu(
     onClick: (() -> Unit)? = null,
-    actions: @Composable (onClick: ClickDecorator) -> Unit,
+    actions: ContextMenuScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
-    var showMenu by remember { mutableStateOf(false) }
-    var boxWidth by remember { mutableStateOf(0.dp) }
-    var dropdownWidth by remember { mutableStateOf(0.dp) }
+    val sheetState = rememberModalBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    val actionsScope = remember(actions) {
+        ContextMenuScope(scope, sheetState).apply(actions)
+    }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .onGloballyPositioned { boxWidth = it.size.width.dp - 100.dp }
             .combinedClickable(
-                onLongClick = { showMenu = true },
+                onLongClick = { scope.launch { sheetState.show() } },
                 onClick = { if (onClick != null) onClick() }
-            )
-    ) {
-        content()
+            ),
 
-        DropdownMenu(
-            expanded = showMenu,
-            onDismissRequest = { showMenu = false },
-            offset = DpOffset(boxWidth - dropdownWidth - 20.dp, 10.dp),
-        ) {
-            actions { action ->
-                return@actions {
-                    showMenu = false
-                    action()
-                }
+        content = { content() }
+    )
+
+    if (sheetState.isVisible || sheetState.isAnimationRunning) {
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { scope.launch { sheetState.hide() } },
+
+            content = {
+                actionsScope.items.forEach { it() }
+                Spacer(Modifier.height(40.dp))
             }
-        }
+        )
     }
 }

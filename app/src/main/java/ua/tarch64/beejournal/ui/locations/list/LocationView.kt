@@ -6,9 +6,7 @@ import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -37,39 +35,18 @@ fun LocationView(
     ContextMenu(
         onClick = onOpen,
 
-        actions = { onClick ->
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Редагувати"
-                    )
-                },
-                text = { Text("Редагувати") },
-                onClick = onClick { scope.launch { editState.show() } }
-            )
+        actions = {
+            action(title = "Редагувати", icon = Icons.Default.Edit) {
+                editState.show()
+            }
 
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.DeleteOutline,
-                        contentDescription = "Видалити"
-                    )
-                },
-                text = { Text("Видалити") },
-                onClick = onClick { onDelete() }
-            )
+            action(title = "Поділитися", icon = Icons.Default.Share) {
+                shareState.show()
+            }
 
-            DropdownMenuItem(
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Поділитися"
-                    )
-                },
-                text = { Text("Поділитися") },
-                onClick = onClick { scope.launch { shareState.show() } }
-            )
+            action(title = "Видалити", icon = Icons.Default.DeleteOutline, destructive = true) {
+                onDelete()
+            }
         }
     ) {
         Box {
