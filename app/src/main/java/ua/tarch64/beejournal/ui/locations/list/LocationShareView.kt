@@ -2,9 +2,9 @@ package ua.tarch64.beejournal.ui.locations.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -13,27 +13,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import ua.tarch64.beejournal.models.LocationModel
+import ua.tarch64.beejournal.models.UserModel
 import ua.tarch64.beejournal.services.LocationsService
 import ua.tarch64.beejournal.services.UsersService
 import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
 import ua.tarch64.beejournal.ui.base.form.FormView
+import ua.tarch64.beejournal.ui.base.form.SearchableDropdown
 
 @Composable
 fun LocationShareView(
     location: LocationModel,
     onBack: () -> Unit,
 ) {
-    var email by remember { mutableStateOf("") }
+    var user by remember { mutableStateOf<UserModel?>(null) }
     var error by remember { mutableStateOf<Exception?>(null) }
 
+    DisposableEffect(Unit) {
+        onDispose(UsersService::clearSearchCache)
+    }
+
     suspend fun share() {
-        val user = UsersService.getUser(email)
         if (user == null) {
             error = Exception("Немає користувача з такою поштою")
             return
         }
 
-        LocationsService.share(location, user)
+        LocationsService.share(location, user!!)
         onBack()
     }
 
@@ -45,11 +50,13 @@ fun LocationShareView(
         onSave = ::share,
         saveLabel = { Text("Поділитися") }
     ) {
-        OutlinedTextField(
+        SearchableDropdown(
             modifier = Modifier.fillMaxWidth(),
-            label = { Text("Пошта") },
-            value = email,
-            onValueChange = { email = it },
+            label = "Пошта",
+            value = user,
+            onValueChange = { user = it },
+            itemLabel = { it.email },
+            onSearch = UsersService::search,
             keyboardOptions = KeyboardOptions.Default.copy(
                 autoCorrectEnabled = false,
                 capitalization = KeyboardCapitalization.None,
