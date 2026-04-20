@@ -11,9 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class ConfirmOperation<D> {
+class ConfirmOperation<D>(
+    private val action: suspend (D) -> Unit,
+    private val scope: CoroutineScope
+) {
     var data by mutableStateOf<D?>(null)
         private set
 
@@ -30,46 +34,48 @@ class ConfirmOperation<D> {
         data = null
     }
 
-    suspend fun execute(action: suspend (D) -> Unit) {
-        confirming = false
-        action(data!!)
-        data = null
+    fun confirm() {
+        scope.launch {
+            confirming = false
+            action(data!!)
+            data = null
+        }
     }
 }
 
 @Composable
-fun <D> rememberConfirmOperation(): ConfirmOperation<D> {
-    return remember { ConfirmOperation() }
+fun <D> rememberConfirmOperation(action: suspend (D) -> Unit): ConfirmOperation<D> {
+    val scope = rememberCoroutineScope()
+    return remember { ConfirmOperation(action, scope) }
 }
 
 @Composable
-fun ConfirmDialog(
+fun <D> ConfirmDialog(
     title: String,
     message: String,
     confirmText: String = "Так",
     dismissText: String = "Ні",
     destructive: Boolean = false,
-    onConfirm: suspend () -> Unit,
-    onDismiss: () -> Unit
+    operation: ConfirmOperation<D>,
 ) {
-    val scope = rememberCoroutineScope()
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = { Text(message) },
-        confirmButton = {
-            TextButton(onClick = { scope.launch { onConfirm() } }) {
-                Text(
-                    confirmText,
-                    color = if (destructive) MaterialTheme.colorScheme.error else Color.Unspecified
-                )
+    if (operation.confirming) {
+        AlertDialog(
+            onDismissRequest = operation::dismiss,
+            title = { Text(title) },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = operation::confirm) {
+                    Text(
+                        confirmText,
+                        color = if (destructive) MaterialTheme.colorScheme.error else Color.Unspecified
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = operation::dismiss) {
+                    Text(dismissText)
+                }
             }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(dismissText)
-            }
-        }
-    )
+        )
+    }
 }

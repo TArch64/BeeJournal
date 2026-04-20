@@ -24,7 +24,9 @@ fun LocationsView(
     onAdd: () -> Unit,
     onOpen: (location: LocationModel) -> Unit
 ) {
-    val confirmingDelete = rememberConfirmOperation<LocationModel>()
+    val confirmingDelete = rememberConfirmOperation<LocationModel> {
+        LocationsService.delete(it)
+    }
 
     DisposableEffect(Unit) {
         LocationsService.load()
@@ -60,13 +62,10 @@ fun LocationsView(
         )
     }
 
-    if (confirmingDelete.confirming) {
-        ConfirmDialog(
-            title = "Ви впевнені?",
-            message = "Ви впевнені що хочете видалити це місце?",
-            destructive = true,
-            onConfirm = { confirmingDelete.execute(LocationsService::delete) },
-            onDismiss = confirmingDelete::dismiss
-        )
-    }
+    ConfirmDialog(
+        title = "Ви впевнені?",
+        message = "Ви впевнені що хочете видалити це місце?",
+        destructive = true,
+        operation = confirmingDelete,
+    )
 }

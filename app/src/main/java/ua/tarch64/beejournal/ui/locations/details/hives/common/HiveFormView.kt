@@ -11,6 +11,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import ua.tarch64.beejournal.models.HiveModel
 import ua.tarch64.beejournal.models.toHex
+import ua.tarch64.beejournal.ui.base.dialogs.ConfirmDialog
+import ua.tarch64.beejournal.ui.base.dialogs.rememberConfirmOperation
 import ua.tarch64.beejournal.ui.base.form.ColorSwatches
 import ua.tarch64.beejournal.ui.base.form.CounterField
 import ua.tarch64.beejournal.ui.base.form.FormView
@@ -29,18 +31,21 @@ fun HiveFormView(
     var honey by remember { mutableIntStateOf(hive.honey) }
     var color by remember { mutableStateOf(hive.color) }
 
-    suspend fun save() = onSave(
-        hive.copy(
-            frames = frames,
-            children = children,
-            honey = honey,
-            colorHex = color.toHex(),
-        )
+    fun getUpdated(): HiveModel = hive.copy(
+        frames = frames,
+        children = children,
+        honey = honey,
+        colorHex = color.toHex(),
     )
+
+    suspend fun save() = onSave(getUpdated())
+
+    val confirmingBack = rememberConfirmOperation<Unit> { onBack() }
+    fun hasChanged(): Boolean = getUpdated() != hive
 
     FormView(
         title = "Новий Вулик",
-        onBack = onBack,
+        onBack = { if (hasChanged()) confirmingBack.show(Unit) else onBack() },
         onSave = ::save,
         saveLabel = { Text(saveLabel) },
     ) {
@@ -79,4 +84,11 @@ fun HiveFormView(
             )
         }
     }
+
+    ConfirmDialog(
+        title = "Ви впевнені?",
+        message = "Ви впевнені що хочете вийти без збереження змін?",
+        destructive = true,
+        operation = confirmingBack
+    )
 }
