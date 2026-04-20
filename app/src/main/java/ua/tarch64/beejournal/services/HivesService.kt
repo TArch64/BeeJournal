@@ -2,6 +2,7 @@ package ua.tarch64.beejournal.services
 
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -38,7 +39,14 @@ object HivesService : CollectionService<HiveModel>() {
     }
 
     suspend fun update(hive: HiveModel) {
-        collection!!.document(hive.id).set(hive).await()
+        document(hive).set(hive).await()
     }
 
+    suspend fun delete(hive: HiveModel) {
+        document(hive).delete().await()
+    }
+
+    private fun document(hive: HiveModel): DocumentReference {
+        return collection!!.document(hive.id)
+    }
 }

@@ -20,11 +20,7 @@ import androidx.compose.ui.unit.dp
 import ua.tarch64.beejournal.models.lighten
 
 @Composable
-fun HiveSpotView(
-    position: Int,
-    color: Color,
-    onClick: () -> Unit = {},
-) {
+fun HiveSpotView(position: Int, color: Color) {
     val backgroundColor = remember(color) { color.lighten(0.2f) }
 
     val backgroundAnimation by animateColorAsState(
@@ -42,12 +38,10 @@ fun HiveSpotView(
         modifier = Modifier
             .width(60.dp)
             .aspectRatio(1f),
-
+        
         colors = CardDefaults.outlinedCardColors(
             containerColor = backgroundAnimation
         ),
-
-        onClick = onClick,
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

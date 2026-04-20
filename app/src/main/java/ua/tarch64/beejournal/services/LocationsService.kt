@@ -1,6 +1,7 @@
 package ua.tarch64.beejournal.services
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
@@ -30,11 +31,11 @@ object LocationsService : CollectionService<LocationModel>() {
     }
 
     suspend fun update(location: LocationModel) {
-        collection.document(location.id).set(location).await()
+        document(location).set(location).await()
     }
 
     suspend fun delete(location: LocationModel) {
-        val document = collection.document(location.id)
+        val document = document(location)
         val hivesQuery = document.collection("hives").get().await()
 
         Firebase.firestore
@@ -48,10 +49,12 @@ object LocationsService : CollectionService<LocationModel>() {
             .await()
     }
 
-
     fun share(location: LocationModel, user: UserModel) {
         location.owners = location.owners.plus(user.id)
-        collection.document(location.id).set(location)
+        document(location).set(location)
     }
 
+    private fun document(location: LocationModel): DocumentReference {
+        return collection.document(location.id)
+    }
 }
