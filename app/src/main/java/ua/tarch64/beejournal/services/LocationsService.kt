@@ -49,9 +49,9 @@ object LocationsService : CollectionService<LocationModel>() {
             .await()
     }
 
-    fun share(location: LocationModel, user: UserModel) {
+    suspend fun share(location: LocationModel, user: UserModel) {
         location.owners = location.owners.plus(user.id)
-        document(location).set(location)
+        document(location).set(location).await()
     }
 
     private fun document(location: LocationModel): DocumentReference {
