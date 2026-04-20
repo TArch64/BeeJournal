@@ -34,9 +34,9 @@ class LocationsService : CollectionService<LocationModel>() {
         collection.document(location.id).set(location).await()
     }
 
-    fun delete(location: LocationModel) {
+    suspend fun delete(location: LocationModel) {
         location.deleted = true
-        collection.document(location.id).set(location)
+        collection.document(location.id).set(location).await()
     }
 
     fun share(location: LocationModel, user: UserModel) {

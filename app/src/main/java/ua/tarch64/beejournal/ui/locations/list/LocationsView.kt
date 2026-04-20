@@ -12,8 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.services.LocationsService
+import ua.tarch64.beejournal.ui.base.dialogs.ConfirmDialog
+import ua.tarch64.beejournal.ui.base.dialogs.ConfirmOperation
 import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
 import ua.tarch64.beejournal.ui.base.list.ListEmpty
 import ua.tarch64.beejournal.ui.base.list.ListView
@@ -27,6 +30,8 @@ fun LocationsView(
     val locations by LocationsService.instance.list.collectAsState()
     val loading by LocationsService.instance.loading.collectAsState()
     val error by LocationsService.instance.error.collectAsState()
+
+    val confirmingDelete = remember { ConfirmOperation<LocationModel>() }
 
     DisposableEffect(Unit) {
         LocationsService.instance.load()
@@ -58,7 +63,17 @@ fun LocationsView(
         LocationView(
             location = location,
             onOpen = { onOpen(location) },
-            onDelete = { LocationsService.instance.delete(location) }
+            onDelete = { confirmingDelete.show(location) }
+        )
+    }
+
+    if (confirmingDelete.confirming) {
+        ConfirmDialog(
+            title = "Ви впевнені?",
+            message = "Ви впевнені що хочете видалити це місце?",
+            destructive = true,
+            onConfirm = { confirmingDelete.execute(LocationsService.instance::delete) },
+            onDismiss = confirmingDelete::dismiss
         )
     }
 }
