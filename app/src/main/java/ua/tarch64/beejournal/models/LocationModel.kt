@@ -9,7 +9,6 @@ data class LocationModel(
     override var id: String = "",
 
     var name: String = "",
-    var deleted: Boolean = false,
     var owners: List<String> = emptyList(),
 
     @ServerTimestamp

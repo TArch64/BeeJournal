@@ -15,7 +15,6 @@ object LocationsService : CollectionService<LocationModel>() {
 
     override val query: Query = collection
         .whereArrayContains("owners", uid)
-        .whereEqualTo("deleted", false)
         .orderBy("createdAt", Query.Direction.DESCENDING)
 
     fun load(force: Boolean = false) = loadCollection(force)
@@ -35,9 +34,20 @@ object LocationsService : CollectionService<LocationModel>() {
     }
 
     suspend fun delete(location: LocationModel) {
-        location.deleted = true
-        collection.document(location.id).set(location).await()
+        val document = collection.document(location.id)
+        val hivesQuery = document.collection("hives").get().await()
+
+        Firebase.firestore
+            .runBatch { batch ->
+                for (hiveDoc in hivesQuery) {
+                    batch.delete(hiveDoc.reference)
+                }
+
+                batch.delete(document)
+            }
+            .await()
     }
+
 
     fun share(location: LocationModel, user: UserModel) {
         location.owners = location.owners.plus(user.id)
