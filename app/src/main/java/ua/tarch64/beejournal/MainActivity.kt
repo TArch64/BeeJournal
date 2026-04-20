@@ -44,7 +44,7 @@ fun BeeJournalApp() {
     val navController = rememberNavController()
 
     LaunchedEffect(user) {
-        Firebase.crashlytics.setUserId(user?.uid ?: "unknown")
+        Firebase.crashlytics.setUserId(user?.uid ?: "")
     }
 
     if (user == null) {
