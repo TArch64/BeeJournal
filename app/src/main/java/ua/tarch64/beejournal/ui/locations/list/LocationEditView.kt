@@ -24,10 +24,7 @@ fun LocationEditView(
 
     suspend fun save() {
         try {
-            LocationsService.instance.update(
-                location.copy(name = name)
-            )
-
+            LocationsService.update(location.copy(name = name))
             onBack()
         } catch (e: Exception) {
             error = e

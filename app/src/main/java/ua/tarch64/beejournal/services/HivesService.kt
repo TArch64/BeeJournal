@@ -9,11 +9,11 @@ import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.tasks.await
 import ua.tarch64.beejournal.models.HiveModel
 
-class HivesService : CollectionService<HiveModel>() {
+object HivesService : CollectionService<HiveModel>() {
     private var collection: CollectionReference? = null
     override val query: Query get() = collection!!.orderBy("position")
 
-    val nextPosition: Int get() = list.value.size.plus(1)
+    val nextPosition: Int get() = list.size.plus(1)
 
     fun load(locationId: String, force: Boolean = false) {
         collection = collection ?: Firebase.firestore
@@ -41,7 +41,4 @@ class HivesService : CollectionService<HiveModel>() {
         collection!!.document(hive.id).set(hive).await()
     }
 
-    companion object {
-        val instance = HivesService()
-    }
 }

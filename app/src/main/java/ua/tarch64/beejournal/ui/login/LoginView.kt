@@ -47,7 +47,7 @@ fun LoginView() {
 
         try {
             val response = credentialManager.getCredential(context as Activity, request)
-            AuthService.instance.handleSignIn(response.credential)
+            AuthService.handleSignIn(response.credential)
         } catch (e: Exception) {
             error = e
         }

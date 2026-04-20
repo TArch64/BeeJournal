@@ -1,43 +1,46 @@
 package ua.tarch64.beejournal.services
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.Source
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import ua.tarch64.beejournal.models.Identifiable
 
 abstract class CollectionService<V : Identifiable> {
-    private val _list = MutableStateFlow(emptyList<V>())
-    private val _loading = MutableStateFlow(true)
-    private val _error = MutableStateFlow<Exception?>(null)
-    private var listener: ListenerRegistration? = null
+    var list by mutableStateOf(emptyList<V>())
+        private set
 
+    var loading by mutableStateOf(false)
+        private set
+
+    var error by mutableStateOf<Exception?>(null)
+        private set
+
+    private var listener: ListenerRegistration? = null
     protected abstract val query: Query
 
-    val list = _list.asStateFlow()
-    val loading = _loading.asStateFlow()
-    val error = _error.asStateFlow()
 
     protected fun loadCollection(force: Boolean = false) {
         if (listener == null) {
-            _loading.value = true
+            loading = true
 
             listener = query.addSnapshotListener { snapshots, exception ->
                 if (snapshots != null) {
-                    _list.value = decode(snapshots)
+                    list = decode(snapshots)
                 }
-                _error.value = exception
-                _loading.value = false
+                error = exception
+                loading = false
             }
         } else if (force) {
-            _loading.value = true
+            loading = true
 
             query
                 .get(Source.SERVER)
-                .addOnSuccessListener { _loading.value = false }
-                .addOnFailureListener { _loading.value = false }
+                .addOnSuccessListener { loading = false }
+                .addOnFailureListener { loading = false }
         }
     }
 

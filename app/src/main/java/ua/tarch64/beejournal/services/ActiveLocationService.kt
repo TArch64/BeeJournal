@@ -7,7 +7,7 @@ import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import ua.tarch64.beejournal.models.LocationModel
 
-class ActiveLocationService : DocumentService<LocationModel>() {
+object ActiveLocationService : DocumentService<LocationModel>() {
     override var document: DocumentReference? = null
 
     fun load(locationId: String, force: Boolean = false) {
@@ -16,7 +16,7 @@ class ActiveLocationService : DocumentService<LocationModel>() {
             .document(locationId)
 
         loadDocument(force = force)
-        HivesService.instance.load(locationId, force = force)
+        HivesService.load(locationId, force = force)
     }
 
     override fun decode(snapshot: DocumentSnapshot): LocationModel {
@@ -26,10 +26,6 @@ class ActiveLocationService : DocumentService<LocationModel>() {
     override fun unload() {
         super.unload()
         document = null
-        HivesService.instance.unload()
-    }
-
-    companion object {
-        val instance = ActiveLocationService()
+        HivesService.unload()
     }
 }

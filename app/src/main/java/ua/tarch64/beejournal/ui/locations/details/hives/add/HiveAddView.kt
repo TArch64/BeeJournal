@@ -9,13 +9,13 @@ import ua.tarch64.beejournal.ui.locations.details.hives.common.HiveFormView
 @Composable
 fun HiveAddView(onBack: () -> Unit) {
     suspend fun addHive(hive: HiveModel) {
-        HivesService.instance.add(hive)
+        HivesService.add(hive)
         onBack()
     }
 
     HiveFormView(
         hive = HiveModel(
-            position = HivesService.instance.nextPosition,
+            position = HivesService.nextPosition,
             frames = listOf(0),
             children = 0,
             honey = 0,

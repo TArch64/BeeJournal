@@ -7,7 +7,7 @@ import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
 import ua.tarch64.beejournal.models.UserModel
 
-class UsersService {
+object UsersService {
     val collection = Firebase.firestore.collection("users")
 
     suspend fun upsert(user: FirebaseUser) {
@@ -32,7 +32,4 @@ class UsersService {
         return if (user.isEmpty) null else user.documents.first().toObject<UserModel>()
     }
 
-    companion object {
-        val instance = UsersService()
-    }
 }

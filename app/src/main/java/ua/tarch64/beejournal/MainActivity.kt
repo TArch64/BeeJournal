@@ -9,8 +9,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -42,11 +40,11 @@ class MainActivity : ComponentActivity() {
 @PreviewScreenSizes
 @Composable
 fun BeeJournalApp() {
-    val user by AuthService.instance.user.collectAsState()
+    val user = AuthService.user
     val navController = rememberNavController()
 
     LaunchedEffect(user) {
-        Firebase.crashlytics.setUserId(user?.uid ?: "unkown")
+        Firebase.crashlytics.setUserId(user?.uid ?: "unknown")
     }
 
     if (user == null) {

@@ -9,9 +9,9 @@ import kotlinx.coroutines.tasks.await
 import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.models.UserModel
 
-class LocationsService : CollectionService<LocationModel>() {
+object LocationsService : CollectionService<LocationModel>() {
     private val collection = Firebase.firestore.collection("locations")
-    private val uid: String get() = AuthService.instance.user.value!!.uid
+    private val uid: String get() = AuthService.user!!.uid
 
     override val query: Query = collection
         .whereArrayContains("owners", uid)
@@ -44,7 +44,4 @@ class LocationsService : CollectionService<LocationModel>() {
         collection.document(location.id).set(location)
     }
 
-    companion object {
-        val instance = LocationsService()
-    }
 }

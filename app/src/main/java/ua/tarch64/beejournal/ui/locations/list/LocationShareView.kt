@@ -27,13 +27,13 @@ fun LocationShareView(
     var error by remember { mutableStateOf<Exception?>(null) }
 
     suspend fun share() {
-        val user = UsersService.instance.getUser(email)
+        val user = UsersService.getUser(email)
         if (user == null) {
             error = Exception("Немає користувача з такою поштою")
             return
         }
 
-        LocationsService.instance.share(location, user)
+        LocationsService.share(location, user)
         onBack()
     }
 

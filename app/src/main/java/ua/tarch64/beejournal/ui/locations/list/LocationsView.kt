@@ -10,14 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.services.LocationsService
 import ua.tarch64.beejournal.ui.base.dialogs.ConfirmDialog
-import ua.tarch64.beejournal.ui.base.dialogs.ConfirmOperation
 import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
+import ua.tarch64.beejournal.ui.base.dialogs.rememberConfirmOperation
 import ua.tarch64.beejournal.ui.base.list.ListEmpty
 import ua.tarch64.beejournal.ui.base.list.ListView
 
@@ -27,23 +24,19 @@ fun LocationsView(
     onAdd: () -> Unit,
     onOpen: (location: LocationModel) -> Unit
 ) {
-    val locations by LocationsService.instance.list.collectAsState()
-    val loading by LocationsService.instance.loading.collectAsState()
-    val error by LocationsService.instance.error.collectAsState()
-
-    val confirmingDelete = remember { ConfirmOperation<LocationModel>() }
+    val confirmingDelete = rememberConfirmOperation<LocationModel>()
 
     DisposableEffect(Unit) {
-        LocationsService.instance.load()
-        onDispose { LocationsService.instance.unload() }
+        LocationsService.load()
+        onDispose { LocationsService.unload() }
     }
 
-    ErrorReport(error)
+    ErrorReport(LocationsService.error)
 
     ListView(
-        list = locations,
-        loading = loading,
-        load = { LocationsService.instance.load(true) },
+        list = LocationsService.list,
+        loading = LocationsService.loading,
+        load = { LocationsService.load(true) },
         topBar = { TopAppBar(title = { Text("BeeJournal") }) },
         addButton = {
             ExtendedFloatingActionButton(
@@ -72,7 +65,7 @@ fun LocationsView(
             title = "Ви впевнені?",
             message = "Ви впевнені що хочете видалити це місце?",
             destructive = true,
-            onConfirm = { confirmingDelete.execute(LocationsService.instance::delete) },
+            onConfirm = { confirmingDelete.execute(LocationsService::delete) },
             onDismiss = confirmingDelete::dismiss
         )
     }

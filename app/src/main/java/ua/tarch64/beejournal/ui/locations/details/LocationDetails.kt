@@ -13,7 +13,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,38 +37,30 @@ fun LocationDetails(
     locationId: String,
     onBack: () -> Unit
 ) {
-    val location by ActiveLocationService.instance.data.collectAsState()
-    val locationLoading by ActiveLocationService.instance.loading.collectAsState()
-    val locationError by ActiveLocationService.instance.error.collectAsState()
-
-    val hives by HivesService.instance.list.collectAsState()
-    val hivesLoading by HivesService.instance.loading.collectAsState()
-    val hivesError by HivesService.instance.error.collectAsState()
-
     val addSheetController = rememberBottomSheetController(skipPartiallyExpanded = true)
 
     val editSheetController = rememberBottomSheetController(skipPartiallyExpanded = true)
     var editingHive by remember { mutableStateOf<HiveModel?>(null) }
 
-    val error = locationError?.let { hivesError }
+    val error = ActiveLocationService.error?.let { HivesService.error }
 
     DisposableEffect(Unit) {
-        ActiveLocationService.instance.load(locationId)
-        onDispose { ActiveLocationService.instance.unload() }
+        ActiveLocationService.load(locationId)
+        onDispose { ActiveLocationService.unload() }
     }
 
     ErrorReport(error)
 
     DetailsLayout(
-        loading = locationLoading || hivesLoading,
-        location = location,
-        onLoad = { ActiveLocationService.instance.load(locationId, force = true) },
+        loading = ActiveLocationService.loading || HivesService.loading,
+        location = ActiveLocationService.data,
+        onLoad = { ActiveLocationService.load(locationId, force = true) },
         onBack = onBack,
         onAdd = addSheetController::show,
         contentLoading = { TextView("Завантажується...") },
         contentError = { TextView(error?.message ?: "") }
     ) {
-        if (hives.isEmpty()) {
+        if (HivesService.list.isEmpty()) {
             ListEmpty(
                 icon = Icons.Default.Home,
                 title = "Пусто",
@@ -77,7 +68,7 @@ fun LocationDetails(
             )
         } else {
             HiveMap(
-                hives = hives,
+                hives = HivesService.list,
                 onEdit = { hive ->
                     editingHive = hive
                     editSheetController.show()

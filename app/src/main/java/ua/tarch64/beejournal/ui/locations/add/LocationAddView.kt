@@ -24,10 +24,7 @@ fun LocationAddView(
 
     suspend fun addLocation() {
         try {
-            val location = LocationsService.instance.add(
-                LocationModel(name = name)
-            )
-
+            val location = LocationsService.add(LocationModel(name = name))
             onOpen(location)
         } catch (e: Exception) {
             error = e

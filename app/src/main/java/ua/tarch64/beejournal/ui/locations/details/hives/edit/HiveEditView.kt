@@ -11,7 +11,7 @@ fun HiveEditView(
     hive: HiveModel
 ) {
     suspend fun saveHive(hive: HiveModel) {
-        HivesService.instance.update(hive)
+        HivesService.update(hive)
         onBack()
     }
 
