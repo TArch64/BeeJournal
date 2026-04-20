@@ -31,7 +31,7 @@ jobs:
         run: echo "${{ secrets.KEYSTORE_PROPERTIES }}" > keystore.properties
 
       - name: Create google-services.json
-        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > app/google-services.json
+        run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > app/google-services.json
 
       - name: Set version
         run: |
