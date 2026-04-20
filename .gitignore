@@ -12,3 +12,4 @@ keystore.properties
 app/keystore.jks
 
 google-services.json
+version.properties
