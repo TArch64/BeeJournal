@@ -10,26 +10,24 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
 import ua.tarch64.beejournal.models.HiveModel
 import ua.tarch64.beejournal.services.ActiveLocationService
 import ua.tarch64.beejournal.services.HivesService
 import ua.tarch64.beejournal.ui.base.dialogs.ErrorReport
 import ua.tarch64.beejournal.ui.base.list.ListEmpty
+import ua.tarch64.beejournal.ui.base.menu.BottomSheetController
+import ua.tarch64.beejournal.ui.base.menu.rememberBottomSheetController
 import ua.tarch64.beejournal.ui.locations.details.hives.add.HiveAddView
 import ua.tarch64.beejournal.ui.locations.details.hives.edit.HiveEditView
 
@@ -40,8 +38,6 @@ fun LocationDetails(
     locationId: String,
     onBack: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-
     val location by ActiveLocationService.instance.data.collectAsState()
     val locationLoading by ActiveLocationService.instance.loading.collectAsState()
     val locationError by ActiveLocationService.instance.error.collectAsState()
@@ -50,14 +46,10 @@ fun LocationDetails(
     val hivesLoading by HivesService.instance.loading.collectAsState()
     val hivesError by HivesService.instance.error.collectAsState()
 
-    val addSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    fun addSheetShow() = scope.launch { addSheetState.show() }
-    fun addSheetHide() = scope.launch { addSheetState.hide() }
+    val addSheetController = rememberBottomSheetController(skipPartiallyExpanded = true)
 
-    val editSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val editSheetController = rememberBottomSheetController(skipPartiallyExpanded = true)
     var editingHive by remember { mutableStateOf<HiveModel?>(null) }
-    fun editSheetShow() = scope.launch { editSheetState.show() }
-    fun editSheetHide() = scope.launch { editSheetState.hide() }
 
     val error = locationError?.let { hivesError }
 
@@ -73,7 +65,7 @@ fun LocationDetails(
         location = location,
         onLoad = { ActiveLocationService.instance.load(locationId, force = true) },
         onBack = onBack,
-        onAdd = ::addSheetShow,
+        onAdd = addSheetController::show,
         contentLoading = { TextView("Завантажується...") },
         contentError = { TextView(error?.message ?: "") }
     ) {
@@ -88,26 +80,21 @@ fun LocationDetails(
                 hives = hives,
                 onEdit = { hive ->
                     editingHive = hive
-                    editSheetShow()
+                    editSheetController.show()
                 }
             )
         }
     }
 
-    BottomSheet(state = addSheetState) {
-        HiveAddView(onBack = ::addSheetHide)
+    BottomSheet(controller = addSheetController) {
+        HiveAddView(onBack = addSheetController::hide)
     }
 
-    if (editingHive != null) {
-        BottomSheet(state = editSheetState) {
-            HiveEditView(
-                hive = editingHive!!,
-                onBack = {
-                    editSheetHide()
-                    editingHive = null
-                }
-            )
-        }
+    BottomSheet(controller = editSheetController) {
+        HiveEditView(
+            hive = editingHive!!,
+            onBack = { editSheetController.hide { editingHive = null } }
+        )
     }
 }
 
@@ -124,16 +111,13 @@ private fun TextView(text: String) {
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun BottomSheet(
-    state: SheetState,
+    controller: BottomSheetController,
     content: @Composable () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    fun hide() = scope.launch { state.hide() }
-
-    if (state.isVisible || state.isAnimationRunning) {
+    if (controller.visible) {
         ModalBottomSheet(
-            sheetState = state,
-            onDismissRequest = ::hide,
+            sheetState = controller.state,
+            onDismissRequest = controller::dismiss,
             dragHandle = {
                 Spacer(
                     modifier = Modifier
@@ -141,8 +125,6 @@ private fun BottomSheet(
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                 )
             },
-        ) {
-            content()
-        }
+        ) { content() }
     }
 }

@@ -12,9 +12,7 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -27,7 +25,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 class ContextMenuScope(
     private val scope: CoroutineScope,
-    private val sheetState: SheetState
+    private val sheetController: BottomSheetController
 ) {
     val items = mutableListOf<@Composable () -> Unit>()
 
@@ -50,10 +48,8 @@ class ContextMenuScope(
                     ListItemDefaults.colors()
                 },
                 modifier = Modifier.clickable {
-                    scope.launch {
-                        sheetState.hide()
-                        onClick()
-                    }
+                    sheetController.hide()
+                    scope.launch { onClick() }
                 }
             )
         }
@@ -67,28 +63,28 @@ fun ContextMenu(
     actions: ContextMenuScope.() -> Unit,
     content: @Composable () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetController = rememberBottomSheetController()
     val scope = rememberCoroutineScope()
 
     val actionsScope = remember(actions) {
-        ContextMenuScope(scope, sheetState).apply(actions)
+        ContextMenuScope(scope, sheetController).apply(actions)
     }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .combinedClickable(
-                onLongClick = { scope.launch { sheetState.show() } },
+                onLongClick = sheetController::show,
                 onClick = { if (onClick != null) onClick() }
             ),
 
         content = { content() }
     )
 
-    if (sheetState.isVisible || sheetState.isAnimationRunning) {
+    if (sheetController.visible) {
         ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { scope.launch { sheetState.hide() } },
+            sheetState = sheetController.state,
+            onDismissRequest = sheetController::dismiss,
 
             content = {
                 actionsScope.items.forEach { it() }

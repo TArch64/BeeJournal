@@ -13,13 +13,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.graphics.Color
-import kotlinx.coroutines.launch
 import ua.tarch64.beejournal.models.LocationModel
 import ua.tarch64.beejournal.ui.base.menu.ContextMenu
+import ua.tarch64.beejournal.ui.base.menu.rememberBottomSheetController
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,20 +26,19 @@ fun LocationView(
     onOpen: () -> Unit,
     onDelete: () -> Unit
 ) {
-    val scope = rememberCoroutineScope()
-    val shareState = rememberModalBottomSheetState()
-    val editState = rememberModalBottomSheetState()
+    val shareController = rememberBottomSheetController()
+    val editController = rememberBottomSheetController()
 
     ContextMenu(
         onClick = onOpen,
 
         actions = {
             action(title = "Редагувати", icon = Icons.Default.Edit) {
-                editState.show()
+                editController.show()
             }
 
             action(title = "Поділитися", icon = Icons.Default.Share) {
-                shareState.show()
+                shareController.show()
             }
 
             action(title = "Видалити", icon = Icons.Default.DeleteOutline, destructive = true) {
@@ -63,26 +60,26 @@ fun LocationView(
         }
     }
 
-    if (shareState.isVisible || shareState.isAnimationRunning) {
+    if (shareController.visible) {
         ModalBottomSheet(
-            sheetState = shareState,
-            onDismissRequest = { scope.launch { shareState.hide() } }
+            sheetState = shareController.state,
+            onDismissRequest = shareController::dismiss,
         ) {
             LocationShareView(
                 location = location,
-                onBack = { scope.launch { shareState.hide() } }
+                onBack = shareController::hide
             )
         }
     }
 
-    if (editState.isVisible || editState.isAnimationRunning) {
+    if (editController.visible) {
         ModalBottomSheet(
-            sheetState = editState,
-            onDismissRequest = { scope.launch { editState.hide() } }
+            sheetState = editController.state,
+            onDismissRequest = editController::dismiss,
         ) {
             LocationEditView(
                 location = location,
-                onBack = { scope.launch { editState.hide() } }
+                onBack = editController::hide
             )
         }
     }
