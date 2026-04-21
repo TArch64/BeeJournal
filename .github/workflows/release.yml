@@ -54,7 +54,7 @@ jobs:
         EOF
 
     - name: Build Release APK
-      run: ./gradlew :app:assembleRelease
+      run: ./gradlew :app:assembleRelease -x test
 
     - name: Upload APK to Release
       env:
@@ -73,4 +73,4 @@ jobs:
         RELEASE_NOTES: ${{ github.event.release.body }}
       run: |
         printenv RELEASE_NOTES > $RUNNER_TEMP/release-notes.txt
-        firebase appdistribution:distribute $RELEASE_APK --app ${{ secrets.FIREBASE_APP_ID }} --release-notes-file $RUNNER_TEMP/release-notes.txt
+        firebase appdistribution:distribute $RELEASE_APK --groups testers --app ${{ secrets.FIREBASE_APP_ID }} --release-notes-file $RUNNER_TEMP/release-notes.txt
