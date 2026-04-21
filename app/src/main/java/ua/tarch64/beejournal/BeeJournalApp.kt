@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.crashlytics
+import com.google.firebase.crashlytics.setCustomKeys
 import ua.tarch64.beejournal.services.AuthService
 import ua.tarch64.beejournal.ui.login.LoginView
 
@@ -23,6 +24,10 @@ fun BeeJournalApp() {
 
     LaunchedEffect(user) {
         Firebase.crashlytics.setUserId(user?.uid ?: "")
+
+        Firebase.crashlytics.setCustomKeys {
+            key("user_email", user?.email ?: "")
+        }
     }
 
     if (user == null) {
